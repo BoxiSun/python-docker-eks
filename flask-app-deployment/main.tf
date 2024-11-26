@@ -106,7 +106,7 @@ resource "kubernetes_deployment_v1" "flask_deployment" {
   }
 
   spec {
-    replicas = 2
+    replicas = var.num_of_replicas
 
     selector {
       match_labels = {

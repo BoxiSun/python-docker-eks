@@ -21,7 +21,7 @@ module "eks" {
   subnet_ids             = module.vpc.private_subnet_ids
   access_entry_admin_arn = var.access_entry_admin_arn
   cluster_endpoint_public_access = true
-  cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
+  cluster_endpoint_public_access_cidrs = var.cluster_endpoint_public_access_cidrs
   aws_iam_role_arn       = var.aws_iam_role_arn
   node_group_name        = "eks_${var.project}"
   min_size               = var.min_size_eks

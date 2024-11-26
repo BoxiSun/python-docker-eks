@@ -16,6 +16,13 @@ variable "image_version" {
   description = "The version of the application image"
 }
 
+variable "num_of_replicas" {
+  type    = number
+  default = 2
+  description = "The number of application pod replicas"
+}
+
+
 variable "aws_iam_role_arn" {
   type    = string
   default = ""

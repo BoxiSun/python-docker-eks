@@ -5,7 +5,7 @@ Cloud provider: AWS
 Prerequisite:
 1. An IAM user with the permission to assume an IAM role (arn:aws:iam::972156694227:role/app-shared-role)
 2. The IAM role "arn:aws:iam::972156694227:role/app-shared-role" with the permission to deploy all the required AWS resources
-Note: Step 2 below requires another role with the same name in another AWS account. The IAM user should also be able to assume that role.
+Note: "Step 2" below requires another role with the same name in another AWS account. The IAM user should also be able to assume that role.
 3. Clone the repo to your local computer (git clone https://github.com/BoxiSun/python-docker-eks.git)
 4. HTTPS certificate requires a owned domain. I am using one of the company owned privated hosted zones for ingress controller 
 

@@ -82,6 +82,12 @@ variable "access_entry_admin_arn" {
   default     = ""
 }
 
+variable "cluster_endpoint_public_access_cidrs" {
+  description = "The public IP addresses that can access the EKS API groups"
+  type        = list("string")
+  default     = [""]
+}
+
 variable "min_size_eks" {
   description = "minimum number of ec2 instances"
   type        = number

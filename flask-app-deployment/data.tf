@@ -45,15 +45,15 @@ data "aws_lb" "flask-alb" {
 }
 
 data "aws_acm_certificate" "default" {
-  domain      = "*.svc-neon.markets"
+  domain      = "*.neon.markets"
   most_recent = true
 }
 
-# data "aws_route53_zone" "test-domain" {
-#   name         = "svc-neon.markets"
-#   private_zone = false
-#   provider     = aws.route53
-# }
+data "aws_route53_zone" "test-domain" {
+  name         = "neon.markets"
+  private_zone = false
+  provider     = aws.route53
+}
 
 data "aws_iam_role" "lb_role" {
   name = "${var.app_name}_eks_lb_role"
