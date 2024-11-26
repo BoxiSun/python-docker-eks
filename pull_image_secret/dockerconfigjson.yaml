@@ -1,0 +1,13 @@
+# This is an example of the image pull secret if you would like to pull an private image from github with personal access token.
+# Detial steps can be found from the article below:
+# https://dev.to/asizikov/using-github-container-registry-with-kubernetes-38fb
+kind: Secret
+type: kubernetes.io/dockerconfigjson
+apiVersion: v1
+metadata:
+  name: flask-image-pull-credential
+  namespace: flask
+  labels:
+    app: flask
+data:
+  .dockerconfigjson: <base64 encoded value of ghcr.io auths>

@@ -1,0 +1,7 @@
+region         = "eu-west-1"
+bucket         = "tfc-backend-flask"
+dynamodb_table = "tfc-backend-flask"
+encrypt        = true
+role_arn       = "arn:aws:iam::972156694227:role/app-shared-role"
+key            = "flask-app/terraform.tfstate"
+
