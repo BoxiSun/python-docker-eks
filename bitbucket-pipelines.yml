@@ -1,0 +1,108 @@
+definitions:
+  services:
+    docker-dind:
+      type: docker
+      memory: 6144
+      image: artifactory.marex.com/docker/docker:dind
+    docker:
+      type: docker
+      memory: 3072
+
+  steps:
+    - step: &image_build
+        name: "Build the flask docker image"
+        image:
+          name: 189667852982.dkr.ecr.eu-west-1.amazonaws.com/platform/pipeline-docker-image:0.1.0.138-build
+          aws:
+            oidc-role: $AWS_IAM_BITBUCKET_ROLE
+        oidc: true
+        size: 8x
+        runs-on:
+          - k8s
+          - linux
+          - self.hosted
+        services:
+          - docker-dind
+        script:
+          - cd $BITBUCKET_CLONE_DIR
+          - export version="$(cat version.txt)"
+          - cd flask-docker
+          - docker build --tag ghcr.io/boxisun/python-docker-eks:$version .
+          - docker login --username BoxiSun --password $personal_token ghcr.io
+          - docker push ghcr.io/boxisun/python-docker-eks:$version
+        filter:
+          includes:
+            - "flask-app-deployment/*"
+
+    - step: &app_deployment_plan
+        name: "Deploy the flask image to the EKS cluster"
+        image:
+          name: 189667852982.dkr.ecr.eu-west-1.amazonaws.com/platform/pipeline-docker-image:0.1.0.138-deploy
+          aws:
+            oidc-role: $AWS_IAM_BITBUCKET_ROLE
+        oidc: true
+        size: 8x
+        runs-on:
+          - k8s
+          - linux
+          - self.hosted
+        services:
+          - docker-dind
+        script:
+           - |
+            cd $BITBUCKET_CLONE_DIR
+            export AWS_ACCESS_KEY_ID=$TEST_AWS_ACCESS_KEY_ID
+            export AWS_SECRET_ACCESS_KEY=$TEST_AWS_SECRET_KEY
+            export version="$(cat version.txt)"
+            cd flask-app-deployment
+            sed -i 's/'$(grep -i "image_version" config/config.tfvars | awk -F'"' '{print $2}')'/'$version'/' config/config.tfvars
+            docker pull ghcr.io/boxisun/python-docker-eks:$version
+            terraform init -reconfigure --backend-config=config/config.tfbackend 
+            terraform plan --var-file=config/config.tfvars
+
+    - step: &app_deployment_apply
+        name: "Deploy the flask image to the EKS cluster"
+        image:
+          name: 189667852982.dkr.ecr.eu-west-1.amazonaws.com/platform/pipeline-docker-image:0.1.0.138-deploy
+          aws:
+            oidc-role: $AWS_IAM_BITBUCKET_ROLE
+        oidc: true
+        size: 8x
+        runs-on:
+          - k8s
+          - linux
+          - self.hosted
+        services:
+          - docker-dind
+        script:
+           - |
+            cd $BITBUCKET_CLONE_DIR
+            export AWS_ACCESS_KEY_ID=$TEST_AWS_ACCESS_KEY_ID
+            export AWS_SECRET_ACCESS_KEY=$TEST_AWS_SECRET_KEY
+            export version="$(cat version.txt)"
+            cd flask-app-deployment
+            sed -i 's/'$(grep -i "image_version" config/config.tfvars | awk -F'"' '{print $2}')'/'$version'/' config/config.tfvars
+            docker pull ghcr.io/boxisun/python-docker-eks:$version
+            terraform init -reconfigure --backend-config=config/config.tfbackend 
+            terraform apply --var-file=config/config.tfvars -auto-approve
+
+pipelines:
+  branches:
+    "**":
+      - step: *image_build
+      - step: *app_deployment_apply
+
+  pull-requests:
+    '**':
+      - step: 
+          name: validate-terraform-files
+          oidc: true
+          script:
+            - for i in $(find config/*/*/*.tfvars);do terraform fmt $i;done
+
+  custom:
+    app_deployment_plan:
+      - step: *app_deployment_plan
+    app_deployment_apply:
+      - step: *image_build
+      - step: *app_deployment_apply
