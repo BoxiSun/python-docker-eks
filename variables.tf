@@ -84,7 +84,7 @@ variable "access_entry_admin_arn" {
 
 variable "cluster_endpoint_public_access_cidrs" {
   description = "The public IP addresses that can access the EKS API groups"
-  type        = list("string")
+  type        = list(string)
   default     = [""]
 }
 
