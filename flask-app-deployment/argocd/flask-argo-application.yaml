@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/BoxiSun/python-docker-eks.git
     targetRevision: HEAD
-    path: flask-app-deployment/manifests
+    path: flask-app-deployment/app_manifests
   destination:
     server: https://kubernetes.default.svc
     namespace: flask
