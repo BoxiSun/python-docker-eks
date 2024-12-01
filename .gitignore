@@ -1,4 +1,5 @@
 .terraform
+.helm
 *.tfstate
 *.tfplan
 *.backup
@@ -10,3 +11,4 @@ modules/
 output.json
 .vs/**
 .idea/**
+.tgz

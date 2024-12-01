@@ -201,8 +201,9 @@ resource "kubernetes_ingress_v1" "flask_ingress" {
     namespace = kubernetes_namespace_v1.flask-namespace.metadata[0].name
     annotations = {
       "alb.ingress.kubernetes.io/load-balancer-name" = "${var.app_name}-alb"
-      "alb.ingress.kubernetes.io/scheme" = "internal"
-      "alb.ingress.kubernetes.io/subnets" = "${data.aws_subnets.private_all_az.ids[0]}, ${data.aws_subnets.private_all_az.ids[1]}"
+      "alb.ingress.kubernetes.io/group.name" = "${var.app_name}-alb"
+      "alb.ingress.kubernetes.io/scheme" = "internet-facing"
+      "alb.ingress.kubernetes.io/subnets" = "${data.aws_subnets.public_all_az.ids[0]}, ${data.aws_subnets.public_all_az.ids[1]}"
       "alb.ingress.kubernetes.io/certificate-arn" = data.aws_acm_certificate.default.arn
       "alb.ingress.kubernetes.io/ssl-redirect" = 443
       "alb.ingress.kubernetes.io/listen-ports" = <<JSON
