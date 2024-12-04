@@ -23,7 +23,7 @@ spec:
     spec:
       automountServiceAccountToken: true
       containers:
-      - image: ghcr.io/boxisun/python-docker-eks:0.0.3
+      - image: ghcr.io/boxisun/python-docker-eks:0.0.5
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 3
