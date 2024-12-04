@@ -15,6 +15,10 @@ definitions:
           name: 189667852982.dkr.ecr.eu-west-1.amazonaws.com/platform/pipeline-docker-image:0.1.0.138-build
           aws:
             oidc-role: $AWS_IAM_BITBUCKET_ROLE
+        condition:
+          changesets:
+            includePaths:
+              - "flask-app-deployment/**"
         oidc: true
         size: 8x
         runs-on:
@@ -30,9 +34,6 @@ definitions:
           - docker build --tag ghcr.io/boxisun/python-docker-eks:$version .
           - docker login --username BoxiSun --password $personal_token ghcr.io
           - docker push ghcr.io/boxisun/python-docker-eks:$version
-        filter:
-          includes:
-            - "flask-app-deployment/*"
 
     - step: &app_deployment_plan
         name: "Plan the flask image deployment to the EKS cluster"
